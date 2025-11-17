@@ -187,6 +187,12 @@ class VZTApp {
                             // Visual feedback
                             btn.style.backgroundColor = '#4CAF50';
                             btn.style.color = 'white';
+
+                            // Automatically login after a short delay
+                            setTimeout(() => {
+                                this.login();
+                            }, 300);
+
                             setTimeout(() => {
                                 btn.style.backgroundColor = '';
                                 btn.style.color = '';
@@ -228,23 +234,13 @@ class VZTApp {
                 console.error('Register button not found');
             }
 
-            // Enter key handlers
-            const loginEmail = document.getElementById('loginEmail');
-            const loginPassword = document.getElementById('loginPassword');
-            
-            if (loginEmail) {
-                loginEmail.addEventListener('keypress', (e) => {
+            // Enter key handlers for login form
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
-                        console.log('Enter pressed in email field');
-                        this.login();
-                    }
-                });
-            }
-            
-            if (loginPassword) {
-                loginPassword.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        console.log('Enter pressed in password field');
+                        e.preventDefault();
+                        console.log('Enter pressed in login form, triggering login.');
                         this.login();
                     }
                 });
