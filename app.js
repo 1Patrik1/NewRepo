@@ -1,15 +1,39 @@
-// VZT Construction Management Application - Fixed Version
+/**
+ * @file Main application logic for the VZT Construction Management App.
+ * @author Jules
+ */
+
+/**
+ * Represents the main application class for the VZT Construction Management App.
+ * This class handles user authentication, data initialization, event listeners,
+ * and all core application functionalities.
+ * @class VZTApp
+ */
 class VZTApp {
+    /**
+     * Initializes the VZTApp, setting up default properties and kicking off data initialization.
+     * @constructor
+     */
     constructor() {
+        /** @property {Object|null} currentUser - The currently logged-in user object, or null if no user is logged in. */
         this.currentUser = null;
+        /** @property {Object|null} map - The Leaflet map instance, initialized when the GPS section is first loaded. */
         this.map = null;
+        /** @property {boolean} isCheckedIn - Tracks the current check-in status of the user. */
         this.isCheckedIn = false;
+        /** @property {Date|null} workStartTime - The timestamp when the user started their work session. */
         this.workStartTime = null;
         
         console.log('VZT App constructor called');
         this.initializeData();
     }
 
+    /**
+     * Initializes the application's data stores in localStorage. If data does not exist,
+     * it populates them with sample users, projects, and messages to ensure the app
+     * is functional on first run.
+     * @returns {void}
+     */
     initializeData() {
         console.log('Initializing data...');
         
@@ -114,6 +138,11 @@ class VZTApp {
         }
     }
 
+    /**
+     * Kicks off the main application logic, including setting up event listeners,
+     * checking authentication status, and starting the continuous clock update.
+     * @returns {void}
+     */
     init() {
         console.log('VZT App initializing...');
         try {
@@ -130,6 +159,11 @@ class VZTApp {
         }
     }
 
+    /**
+     * Sets up all initial event listeners for the login and registration forms.
+     * This includes tab switching, demo account buttons, and form submission.
+     * @returns {void}
+     */
     setupEventListeners() {
         console.log('Setting up event listeners...');
 
@@ -256,6 +290,12 @@ class VZTApp {
         }
     }
 
+    /**
+     * Sets up event listeners for the main application interface, which are required
+     * after a user has successfully logged in. This includes navigation, logout,
+     * theme toggling, and feature-specific interactions.
+     * @returns {void}
+     */
     setupMainAppEventListeners() {
         console.log('Setting up main app event listeners...');
         
@@ -416,6 +456,11 @@ class VZTApp {
         }
     }
 
+    /**
+     * Checks for a saved user session in localStorage. If a user is found,
+     * it transitions to the main application view; otherwise, it shows the login screen.
+     * @returns {void}
+     */
     checkAuth() {
         console.log('Checking authentication...');
         try {
@@ -434,6 +479,12 @@ class VZTApp {
         }
     }
 
+    /**
+     * Handles the user login process. It retrieves user credentials from the form,
+     * validates them against the stored user data, and on success, transitions
+     * to the main application.
+     * @returns {void}
+     */
     login() {
         console.log('Login function called');
         
@@ -488,6 +539,12 @@ class VZTApp {
         }
     }
 
+    /**
+     * Handles new user registration. It collects registration data from the form,
+     * checks for existing users with the same email, and if unique, creates a new
+     * user account.
+     * @returns {void}
+     */
     register() {
         console.log('Register function called');
         
@@ -540,6 +597,11 @@ class VZTApp {
         }
     }
 
+    /**
+     * Logs the current user out of the application by clearing their session data
+     * from localStorage and returning to the login screen.
+     * @returns {void}
+     */
     logout() {
         console.log('Logout function called');
         try {
@@ -554,6 +616,10 @@ class VZTApp {
         }
     }
 
+    /**
+     * Displays the login screen and hides the main application interface.
+     * @returns {void}
+     */
     showLoginScreen() {
         console.log('Showing login screen');
         try {
@@ -578,6 +644,11 @@ class VZTApp {
         }
     }
 
+    /**
+     * Displays the main application interface and hides the login screen.
+     * It also populates user-specific information and sets up main app event listeners.
+     * @returns {void}
+     */
     showMainApp() {
         console.log('Showing main app for user:', this.currentUser.name);
         
@@ -625,6 +696,12 @@ class VZTApp {
         }
     }
 
+    /**
+     * Manages the visibility of different content sections within the main application.
+     * It ensures that only the selected section is active and visible.
+     * @param {string} sectionName - The name of the section to display (e.g., 'dashboard', 'gps').
+     * @returns {void}
+     */
     showSection(sectionName) {
         console.log('Showing section:', sectionName);
         
@@ -684,6 +761,11 @@ class VZTApp {
         }
     }
 
+    /**
+     * Updates the digital clock display with the current time. This method is called
+     * repeatedly by a `setInterval` timer.
+     * @returns {void}
+     */
     updateClock() {
         try {
             const now = new Date();
@@ -697,6 +779,11 @@ class VZTApp {
         }
     }
 
+    /**
+     * Loads and displays the data for the main dashboard, including project statistics,
+     * photos, reports, and work time.
+     * @returns {void}
+     */
     loadDashboard() {
         console.log('Loading dashboard...');
         
@@ -751,6 +838,11 @@ class VZTApp {
         }
     }
 
+    /**
+     * Populates the projects grid on the dashboard with the latest project data.
+     * @param {Array<Object>} projects - An array of project objects to be displayed.
+     * @returns {void}
+     */
     loadProjectsGrid(projects) {
         const grid = document.getElementById('projectsGrid');
         if (!grid) return;
@@ -776,6 +868,11 @@ class VZTApp {
         });
     }
 
+    /**
+     * Initializes the GPS and attendance section. This includes setting up the Leaflet map
+     * and loading the current day's attendance records for the user.
+     * @returns {void}
+     */
     loadGPS() {
         console.log('Loading GPS section...');
         
@@ -819,6 +916,10 @@ class VZTApp {
         this.updateAttendanceStatus();
     }
 
+    /**
+     * Loads and displays the current user's attendance records for the current day.
+     * @returns {void}
+     */
     loadAttendance() {
         const attendance = JSON.parse(localStorage.getItem('vzt_attendance') || '[]');
         const today = new Date().toDateString();
@@ -847,6 +948,11 @@ class VZTApp {
         });
     }
 
+    /**
+     * Updates the UI to reflect the user's current check-in or check-out status,
+     * showing the appropriate button.
+     * @returns {void}
+     */
     updateAttendanceStatus() {
         const attendance = JSON.parse(localStorage.getItem('vzt_attendance') || '[]');
         const today = new Date().toDateString();
@@ -869,6 +975,11 @@ class VZTApp {
         }
     }
 
+    /**
+     * Handles the check-in process. It captures the user's GPS location and creates
+     * a new attendance entry.
+     * @returns {void}
+     */
     checkIn() {
         console.log('Check in requested');
         if (navigator.geolocation) {
@@ -903,6 +1014,11 @@ class VZTApp {
         }
     }
 
+    /**
+     * Handles the check-out process by updating the user's last attendance entry
+     * with a checkout timestamp.
+     * @returns {void}
+     */
     checkOut() {
         console.log('Check out requested');
         const attendance = JSON.parse(localStorage.getItem('vzt_attendance') || '[]');
@@ -923,16 +1039,30 @@ class VZTApp {
         }
     }
 
+    /**
+     * Placeholder for loading photos. The implementation for photo functionality
+     * would be added here.
+     * @returns {void}
+     */
     loadPhotos() {
         console.log('Loading photos...');
         // Photo functionality would be implemented here
     }
 
+    /**
+     * Placeholder for loading reports. The implementation for reports functionality
+     * would be added here.
+     * @returns {void}
+     */
     loadReports() {
         console.log('Loading reports...');
         // Reports functionality would be implemented here
     }
 
+    /**
+     * Displays the modal dialog for uploading photos.
+     * @returns {void}
+     */
     showPhotoModal() {
         const modal = document.getElementById('photoModal');
         if (modal) {
@@ -940,10 +1070,19 @@ class VZTApp {
         }
     }
 
+    /**
+     * Placeholder for saving a photo. The implementation for photo saving
+     * would be added here.
+     * @returns {void}
+     */
     savePhoto() {
         console.log('Save photo functionality would be implemented here');
     }
 
+    /**
+     * Displays the modal dialog for creating a new report.
+     * @returns {void}
+     */
     showReportModal() {
         const modal = document.getElementById('reportModal');
         if (modal) {
@@ -951,11 +1090,19 @@ class VZTApp {
         }
     }
 
+    /**
+     * Placeholder for saving a report. The implementation for report saving
+     * would be added here.
+     * @returns {void}
+     */
     saveReport() {
         console.log('Save report functionality would be implemented here');
     }
 
-    // VZT Calculators
+    /**
+     * Calculates pipe sizing based on flow and velocity inputs.
+     * @returns {void}
+     */
     calculatePipeSizing() {
         console.log('Calculating pipe sizing...');
         try {
@@ -1007,6 +1154,10 @@ class VZTApp {
         }
     }
 
+    /**
+     * Calculates the equivalent duct length, accounting for straight sections, bends, and branches.
+     * @returns {void}
+     */
     calculateDuctLength() {
         console.log('Calculating duct length...');
         try {
@@ -1052,6 +1203,10 @@ class VZTApp {
         }
     }
 
+    /**
+     * Calculates the required airflow based on room volume and desired air changes per hour.
+     * @returns {void}
+     */
     calculateAirflow() {
         console.log('Calculating airflow...');
         try {
@@ -1095,6 +1250,10 @@ class VZTApp {
         }
     }
 
+    /**
+     * Calculates pressure loss in a pipe based on its length, diameter, and air velocity.
+     * @returns {void}
+     */
     calculatePressureLoss() {
         console.log('Calculating pressure loss...');
         try {
@@ -1147,6 +1306,10 @@ class VZTApp {
         }
     }
 
+    /**
+     * Loads and displays chat messages for the currently selected channel.
+     * @returns {void}
+     */
     loadChatMessages() {
         console.log('Loading chat messages...');
         try {
@@ -1179,6 +1342,10 @@ class VZTApp {
         }
     }
 
+    /**
+     * Sends a new chat message to the currently selected channel.
+     * @returns {void}
+     */
     sendMessage() {
         console.log('Sending message...');
         try {
@@ -1213,21 +1380,40 @@ class VZTApp {
         }
     }
 
+    /**
+     * Placeholder for loading the admin panel. Admin-specific functionality
+     * would be implemented here.
+     * @returns {void}
+     */
     loadAdminPanel() {
         console.log('Loading admin panel...');
         // Admin panel functionality would be implemented here
     }
 
+    /**
+     * Placeholder for loading the settings page. User settings functionality
+     * would be implemented here.
+     * @returns {void}
+     */
     loadSettings() {
         console.log('Loading settings...');
         // Settings functionality would be implemented here
     }
 
+    /**
+     * Placeholder for loading the data export page. Data export functionality
+     * would be implemented here.
+     * @returns {void}
+     */
     loadExport() {
         console.log('Loading export...');
         // Export functionality would be implemented here
     }
 
+    /**
+     * Toggles the application's color scheme between light and dark themes.
+     * @returns {void}
+     */
     toggleTheme() {
         const currentTheme = localStorage.getItem('vzt_theme') || 'light';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -1236,6 +1422,10 @@ class VZTApp {
         this.applyTheme();
     }
 
+    /**
+     * Applies the currently selected theme (light or dark) to the application's UI.
+     * @returns {void}
+     */
     applyTheme() {
         const theme = localStorage.getItem('vzt_theme') || 'light';
         document.documentElement.setAttribute('data-color-scheme', theme);
@@ -1246,6 +1436,12 @@ class VZTApp {
         }
     }
 
+    /**
+     * Logs an audit trail entry for significant actions within the application.
+     * @param {string} action - The action being performed (e.g., 'Login').
+     * @param {string} details - A description of the action.
+     * @returns {void}
+     */
     logAudit(action, details) {
         try {
             const auditLog = JSON.parse(localStorage.getItem('vzt_audit_log') || '[]');
@@ -1271,6 +1467,10 @@ class VZTApp {
         }
     }
 
+    /**
+     * Calculates the start date of the current week (assuming Monday is the first day).
+     * @returns {Date} The date of the Monday of the current week.
+     */
     getThisWeekStart() {
         const today = new Date();
         const day = today.getDay();
@@ -1296,7 +1496,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
 });
 
-// Add global functions for compatibility
+/**
+ * Deletes a user from the system. This function is exposed globally for potential
+ * use in dynamically generated UI elements.
+ * @param {string} userId - The ID of the user to be deleted.
+ * @global
+ */
 window.deleteUser = function(userId) {
     if (window.app) {
         window.app.deleteUser(userId);
