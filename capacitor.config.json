@@ -1,0 +1,8 @@
+{
+  "appId": "com.vzt.install",
+  "appName": "Install",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

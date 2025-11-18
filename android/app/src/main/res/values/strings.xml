@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Install</string>
+    <string name="title_activity_main">Install</string>
+    <string name="package_name">com.vzt.install</string>
+    <string name="custom_url_scheme">com.vzt.install</string>
+</resources>

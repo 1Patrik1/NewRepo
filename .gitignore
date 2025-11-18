@@ -4,3 +4,9 @@
 
 # Dynamic plugins .dll
 bin/
+
+# Node dependencies
+node_modules/
+
+# Downloaded files
+*.zip

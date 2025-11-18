@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VZT Konstrukce - Správa projektů</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>VZT Konstrukce</h1>
+                <p>Systém správy projektů klimatizace a vzduchotechniky</p>
+            </div>
+
+            <div class="login-tabs">
+                <button class="tab-btn active" data-tab="login">Přihlášení</button>
+                <button class="tab-btn" data-tab="register">Registrace</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="login-form active">
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Heslo:</label>
+                    <input type="password" id="loginPassword" class="form-control" required>
+                </div>
+                <button type="button" id="loginBtn" class="btn btn--primary btn--full-width">Přihlásit se</button>
+
+                <div class="demo-accounts">
+                    <p>Demo účty:</p>
+                    <button type="button" class="btn btn--outline btn--sm demo-btn" data-role="admin">Admin</button>
+                    <button type="button" class="btn btn--outline btn--sm demo-btn" data-role="supervisor">Vedoucí</button>
+                    <button type="button" class="btn btn--outline btn--sm demo-btn" data-role="worker">Dělník</button>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="regName">Jméno:</label>
+                    <input type="text" id="regName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="regEmail">Email:</label>
+                    <input type="email" id="regEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="regPassword">Heslo:</label>
+                    <input type="password" id="regPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="regRole">Role:</label>
+                    <select id="regRole" class="form-control" required>
+                        <option value="">Vyberte roli</option>
+                        <option value="worker">Dělník</option>
+                        <option value="supervisor">Vedoucí</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="button" id="registerBtn" class="btn btn--primary btn--full-width">Registrovat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="main-app hidden">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>VZT Konstrukce</h2>
+                <div class="user-info">
+                    <span id="currentUser">Uživatel</span>
+                    <span id="currentRole" class="role-badge">Role</span>
+                </div>
+            </div>
+
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-item active" data-section="dashboard">📊 Dashboard</a></li>
+                <li><a href="#" class="nav-item" data-section="gps">🗺️ GPS & Docházka</a></li>
+                <li><a href="#" class="nav-item" data-section="photos">📷 Fotodokumentace</a></li>
+                <li><a href="#" class="nav-item" data-section="reports">📋 Reporty</a></li>
+                <li><a href="#" class="nav-item" data-section="calculators">🧮 VZT Kalkulačky</a></li>
+                <li><a href="#" class="nav-item" data-section="chat">💬 Chat</a></li>
+                <li class="admin-only hidden"><a href="#" class="nav-item" data-section="admin">⚙️ Administrace</a></li>
+                <li><a href="#" class="nav-item" data-section="settings">🛠️ Nastavení</a></li>
+                <li><a href="#" class="nav-item" data-section="export">📤 Export</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn--outline btn--sm">Odhlásit se</button>
+                <button id="themeToggle" class="btn btn--secondary btn--sm">🌙</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1>Dashboard</h1>
+                    <div class="current-time" id="currentTime"></div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Aktivní projekty</h3>
+                        <div class="stat-number" id="activeProjects">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Dnešní fotky</h3>
+                        <div class="stat-number" id="todayPhotos">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Reporty tento týden</h3>
+                        <div class="stat-number" id="weeklyReports">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pracovní doba</h3>
+                        <div class="stat-number" id="workTime">0h</div>
+                    </div>
+                </div>
+
+                <div class="projects-grid" id="projectsGrid">
+                    <!-- Projects will be loaded dynamically -->
+                </div>
+
+                <div class="weather-widget">
+                    <h3>Počasí</h3>
+                    <div class="weather-info">
+                        <span>Praha: 22°C ☀️</span>
+                        <span>Vítr: 5 km/h</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GPS & Attendance Section -->
+            <section id="gps" class="content-section">
+                <div class="section-header">
+                    <h1>GPS & Docházka</h1>
+                    <div class="attendance-status" id="attendanceStatus">
+                        <button id="checkInBtn" class="btn btn--primary">Check In</button>
+                        <button id="checkOutBtn" class="btn btn--secondary hidden">Check Out</button>
+                    </div>
+                </div>
+
+                <div class="gps-content">
+                    <div id="map" style="height: 400px; border-radius: var(--radius-lg);"></div>
+                    <div class="attendance-log">
+                        <h3>Docházka dnes</h3>
+                        <div id="attendanceList" class="attendance-entries">
+                            <!-- Attendance entries will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Photos Section -->
+            <section id="photos" class="content-section">
+                <div class="section-header">
+                    <h1>Fotodokumentace</h1>
+                    <button id="uploadPhotoBtn" class="btn btn--primary">📷 Přidat foto</button>
+                </div>
+
+                <div class="photo-filters">
+                    <select id="projectFilter" class="form-control">
+                        <option value="">Všechny projekty</option>
+                    </select>
+                    <input type="date" id="dateFilter" class="form-control">
+                </div>
+
+                <div class="photo-gallery" id="photoGallery">
+                    <!-- Photos will be loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section">
+                <div class="section-header">
+                    <h1>Reporty & Protokoly</h1>
+                    <button id="createReportBtn" class="btn btn--primary">📋 Nový report</button>
+                </div>
+
+                <div class="reports-list" id="reportsList">
+                    <!-- Reports will be loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Calculators Section -->
+            <section id="calculators" class="content-section">
+                <div class="section-header">
+                    <h1>VZT Kalkulačky</h1>
+                </div>
+
+                <div class="calculator-tabs">
+                    <button class="calc-tab-btn active" data-calc="pipe-sizing">Velikost potrubí</button>
+                    <button class="calc-tab-btn" data-calc="duct-length">Délka kanálu</button>
+                    <button class="calc-tab-btn" data-calc="airflow">Průtok vzduchu</button>
+                    <button class="calc-tab-btn" data-calc="pressure-loss">Tlakové ztráty</button>
+                </div>
+
+                <!-- Pipe Sizing Calculator -->
+                <div id="pipe-sizing" class="calculator-panel active">
+                    <h3>Výpočet velikosti potrubí</h3>
+                    <div class="calc-inputs">
+                        <div class="form-group">
+                            <label class="form-label">Průtok (m³/h):</label>
+                            <input type="number" id="pipeFlow" class="form-control" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Rychlost (m/s):</label>
+                            <input type="number" id="pipeVelocity" class="form-control" step="0.1" value="2.5">
+                        </div>
+                        <button id="calcPipe" class="btn btn--primary">Vypočítat</button>
+                    </div>
+                    <div class="calc-results" id="pipeResults"></div>
+                </div>
+
+                <!-- Duct Length Calculator -->
+                <div id="duct-length" class="calculator-panel">
+                    <h3>Výpočet délky kanálu</h3>
+                    <div class="calc-inputs">
+                        <div class="form-group">
+                            <label class="form-label">Přímá délka (m):</label>
+                            <input type="number" id="ductStraight" class="form-control" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Počet ohybů:</label>
+                            <input type="number" id="ductBends" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Počet odboček:</label>
+                            <input type="number" id="ductBranches" class="form-control">
+                        </div>
+                        <button id="calcDuct" class="btn btn--primary">Vypočítat</button>
+                    </div>
+                    <div class="calc-results" id="ductResults"></div>
+                </div>
+
+                <!-- Airflow Calculator -->
+                <div id="airflow" class="calculator-panel">
+                    <h3>Výpočet průtoku vzduchu</h3>
+                    <div class="calc-inputs">
+                        <div class="form-group">
+                            <label class="form-label">Objem místnosti (m³):</label>
+                            <input type="number" id="roomVolume" class="form-control" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Výměna vzduchu (1/h):</label>
+                            <input type="number" id="airChanges" class="form-control" step="0.1" value="3">
+                        </div>
+                        <button id="calcAirflow" class="btn btn--primary">Vypočítat</button>
+                    </div>
+                    <div class="calc-results" id="airflowResults"></div>
+                </div>
+
+                <!-- Pressure Loss Calculator -->
+                <div id="pressure-loss" class="calculator-panel">
+                    <h3>Tlakové ztráty</h3>
+                    <div class="calc-inputs">
+                        <div class="form-group">
+                            <label class="form-label">Délka potrubí (m):</label>
+                            <input type="number" id="pipeLength" class="form-control" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Průměr (mm):</label>
+                            <input type="number" id="pipeDiameter" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Rychlost (m/s):</label>
+                            <input type="number" id="pressureVelocity" class="form-control" step="0.1">
+                        </div>
+                        <button id="calcPressure" class="btn btn--primary">Vypočítat</button>
+                    </div>
+                    <div class="calc-results" id="pressureResults"></div>
+                </div>
+            </section>
+
+            <!-- Chat Section -->
+            <section id="chat" class="content-section">
+                <div class="section-header">
+                    <h1>Chat</h1>
+                    <select id="chatChannel" class="form-control">
+                        <option value="general">Obecný</option>
+                        <option value="emergency">Nouzový</option>
+                    </select>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Messages will be loaded here -->
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="messageInput" class="form-control" placeholder="Napište zprávu...">
+                        <button id="sendMessageBtn" class="btn btn--primary">Odeslat</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin Section -->
+            <section id="admin" class="content-section">
+                <div class="section-header">
+                    <h1>Administrace</h1>
+                </div>
+
+                <div class="admin-tabs">
+                    <button class="admin-tab-btn active" data-tab="users">Uživatelé</button>
+                    <button class="admin-tab-btn" data-tab="audit">Audit log</button>
+                    <button class="admin-tab-btn" data-tab="system">Systém</button>
+                </div>
+
+                <div id="admin-users" class="admin-panel active">
+                    <h3>Správa uživatelů</h3>
+                    <button id="addUserBtn" class="btn btn--primary">Přidat uživatele</button>
+                    <div class="users-table" id="usersTable">
+                        <!-- Users table will be loaded here -->
+                    </div>
+                </div>
+
+                <div id="admin-audit" class="admin-panel">
+                    <h3>Audit log</h3>
+                    <div id="auditLog">
+                        <!-- Audit entries will be loaded here -->
+                    </div>
+                </div>
+
+                <div id="admin-system" class="admin-panel">
+                    <h3>Systémové informace</h3>
+                    <div class="system-info">
+                        <p>Verze aplikace: 1.0.0</p>
+                        <p>Počet uživatelů: <span id="totalUsers">0</span></p>
+                        <p>Počet projektů: <span id="totalProjects">0</span></p>
+                        <p>Celkem fotek: <span id="totalPhotos">0</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <div class="section-header">
+                    <h1>Nastavení</h1>
+                </div>
+
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label class="form-label">Jméno:</label>
+                        <input type="text" id="settingsName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email:</label>
+                        <input type="email" id="settingsEmail" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notifikace:</label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="notificationsEnabled" checked>
+                            Povolit notifikace
+                        </label>
+                    </div>
+                    <button id="saveSettingsBtn" class="btn btn--primary">Uložit nastavení</button>
+                </div>
+            </section>
+
+            <!-- Export Section -->
+            <section id="export" class="content-section">
+                <div class="section-header">
+                    <h1>Export dat</h1>
+                </div>
+
+                <div class="export-options">
+                    <div class="export-card">
+                        <h3>Kompletní export</h3>
+                        <p>Export všech dat aplikace</p>
+                        <button id="exportAllBtn" class="btn btn--primary">Exportovat vše (JSON)</button>
+                    </div>
+                    <div class="export-card">
+                        <h3>Projektový export</h3>
+                        <p>Export dat konkrétního projektu</p>
+                        <select id="exportProjectSelect" class="form-control">
+                            <option value="">Vyberte projekt</option>
+                        </select>
+                        <button id="exportProjectBtn" class="btn btn--primary">Exportovat projekt</button>
+                    </div>
+                    <div class="export-card">
+                        <h3>Záloha systému</h3>
+                        <p>Vytvořit kompletní zálohu</p>
+                        <button id="createBackupBtn" class="btn btn--primary">Vytvořit zálohu</button>
+                        <input type="file" id="restoreBackup" accept=".json" class="hidden">
+                        <button id="restoreBackupBtn" class="btn btn--secondary">Obnovit zálohu</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Photo Upload Modal -->
+    <div id="photoModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Přidat foto</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Projekt:</label>
+                    <select id="photoProject" class="form-control" required>
+                        <option value="">Vyberte projekt</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Popis:</label>
+                    <textarea id="photoDescription" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Foto:</label>
+                    <input type="file" id="photoFile" class="form-control" accept="image/*" multiple>
+                </div>
+                <div class="form-actions">
+                    <button id="savePhotoBtn" class="btn btn--primary">Uložit foto</button>
+                    <button class="btn btn--secondary modal-close">Zrušit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nový report</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Typ reportu:</label>
+                    <select id="reportType" class="form-control" required>
+                        <option value="">Vyberte typ</option>
+                        <option value="daily">Denní report</option>
+                        <option value="weekly">Týdenní report</option>
+                        <option value="inspection">Kontrolní protokol</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Projekt:</label>
+                    <select id="reportProject" class="form-control" required>
+                        <option value="">Vyberte projekt</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Název:</label>
+                    <input type="text" id="reportTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Obsah:</label>
+                    <textarea id="reportContent" class="form-control" rows="6"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button id="saveReportBtn" class="btn btn--primary">Uložit report</button>
+                    <button class="btn btn--secondary modal-close">Zrušit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
