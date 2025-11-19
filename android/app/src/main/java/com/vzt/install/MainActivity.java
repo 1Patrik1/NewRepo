@@ -1,3 +1,4 @@
+
 package com.vzt.install;
 
 import com.getcapacitor.BridgeActivity;
