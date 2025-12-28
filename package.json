@@ -1,7 +1,24 @@
 {
+  "name": "vzt-construction-app",
+  "version": "1.0.0",
+  "description": "VZT Construction Management Application",
+  "main": "index.html",
+  "scripts": {
+    "sync": "npx cap sync",
+    "copy": "cp index.html www/ && cp app.js www/ && cp style.css www/",
+    "build": "npm run copy && npx cap sync",
+    "open:android": "npx cap open android",
+    "serve": "npx http-server . -p 8080 -o"
+  },
+  "keywords": ["vzt", "hvac", "construction", "management"],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@capacitor/android": "^7.4.4",
     "@capacitor/cli": "^7.4.4",
     "@capacitor/core": "^7.4.4"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
   }
 }

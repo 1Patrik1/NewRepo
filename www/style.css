@@ -162,7 +162,7 @@
     --color-bg-6: rgba(194, 65, 12, 0.15); /* Dark orange */
     --color-bg-7: rgba(190, 24, 93, 0.15); /* Dark pink */
     --color-bg-8: rgba(8, 145, 178, 0.15); /* Dark cyan */
-
+    
     /* Semantic Color Tokens (Dark Mode) */
     --color-background: var(--color-charcoal-700);
     --color-surface: var(--color-charcoal-800);
@@ -222,7 +222,7 @@
   --color-bg-6: rgba(194, 65, 12, 0.15); /* Dark orange */
   --color-bg-7: rgba(190, 24, 93, 0.15); /* Dark pink */
   --color-bg-8: rgba(8, 145, 178, 0.15); /* Dark cyan */
-
+  
   /* Semantic Color Tokens (Dark Mode) */
   --color-background: var(--color-charcoal-700);
   --color-surface: var(--color-charcoal-800);
@@ -268,7 +268,7 @@
   --color-brown-600-rgb: 94, 82, 64;
   --color-teal-500-rgb: 33, 128, 141;
   --color-slate-900-rgb: 19, 52, 59;
-
+  
   /* Semantic Color Tokens (Light Mode) */
   --color-background: var(--color-cream-50);
   --color-surface: var(--color-cream-100);
@@ -1502,41 +1502,41 @@ select.form-control {
   .main-app {
     flex-direction: column;
   }
-
+  
   .sidebar {
     width: 100%;
     height: auto;
   }
-
+  
   .nav-menu {
     display: flex;
     flex-wrap: wrap;
     padding: var(--space-8);
   }
-
+  
   .nav-item {
     padding: var(--space-8) var(--space-12);
     border: none;
     border-radius: var(--radius-base);
     margin: var(--space-4);
   }
-
+  
   .dashboard-stats {
     grid-template-columns: repeat(2, 1fr);
   }
-
+  
   .projects-grid {
     grid-template-columns: 1fr;
   }
-
+  
   .gps-content {
     grid-template-columns: 1fr;
   }
-
+  
   .calc-inputs {
     grid-template-columns: 1fr;
   }
-
+  
   .export-options {
     grid-template-columns: 1fr;
   }
@@ -1568,14 +1568,14 @@ select.form-control {
 }
 
 /* Status indicators */
-.status-online {
-  color: var(--color-success);
+.status-online { 
+  color: var(--color-success); 
 }
-.status-offline {
-  color: var(--color-text-secondary);
+.status-offline { 
+  color: var(--color-text-secondary); 
 }
-.status-busy {
-  color: var(--color-warning);
+.status-busy { 
+  color: var(--color-warning); 
 }
 
 /* Print styles */
