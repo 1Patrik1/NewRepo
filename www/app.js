@@ -5,14 +5,14 @@ class VZTApp {
         this.map = null;
         this.isCheckedIn = false;
         this.workStartTime = null;
-
+        
         console.log('VZT App constructor called');
         this.initializeData();
     }
 
     initializeData() {
         console.log('Initializing data...');
-
+        
         // Demo users
         const demoUsers = [
             {
@@ -63,7 +63,7 @@ class VZTApp {
             if (!localStorage.getItem('vzt_users')) {
                 localStorage.setItem('vzt_users', JSON.stringify(demoUsers));
             }
-
+            
             if (!localStorage.getItem('vzt_projects')) {
                 localStorage.setItem('vzt_projects', JSON.stringify(sampleProjects));
             }
@@ -107,7 +107,7 @@ class VZTApp {
             if (!localStorage.getItem('vzt_theme')) {
                 localStorage.setItem('vzt_theme', 'light');
             }
-
+            
             console.log('Data initialization complete');
         } catch (error) {
             console.error('Error initializing localStorage:', error);
@@ -121,7 +121,7 @@ class VZTApp {
             this.checkAuth();
             this.updateClock();
             this.applyTheme();
-
+            
             // Update clock every second
             setInterval(() => this.updateClock(), 1000);
             console.log('VZT App initialized successfully');
@@ -137,15 +137,15 @@ class VZTApp {
             // Login/Register tabs
             const tabBtns = document.querySelectorAll('.tab-btn');
             console.log('Found tab buttons:', tabBtns.length);
-
+            
             tabBtns.forEach((btn, index) => {
                 console.log(`Setting up tab button ${index}:`, btn.textContent);
                 btn.addEventListener('click', (e) => {
                     console.log('Tab clicked:', e.target.dataset.tab);
-
+                    
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
-
+                    
                     e.target.classList.add('active');
                     const tab = e.target.dataset.tab;
                     const targetForm = document.getElementById(tab + 'Form');
@@ -161,29 +161,29 @@ class VZTApp {
             // Demo account buttons
             const demoBtns = document.querySelectorAll('.demo-btn');
             console.log('Found demo buttons:', demoBtns.length);
-
+            
             demoBtns.forEach((btn, index) => {
                 console.log(`Setting up demo button ${index}:`, btn.dataset.role);
                 btn.addEventListener('click', (e) => {
                     console.log('Demo button clicked:', e.target.dataset.role);
                     e.preventDefault();
-
+                    
                     const role = e.target.dataset.role;
                     const users = JSON.parse(localStorage.getItem('vzt_users'));
                     const user = users.find(u => u.role === role);
-
+                    
                     if (user) {
                         const emailField = document.getElementById('loginEmail');
                         const passwordField = document.getElementById('loginPassword');
-
+                        
                         console.log('Email field found:', !!emailField);
                         console.log('Password field found:', !!passwordField);
-
+                        
                         if (emailField && passwordField) {
                             emailField.value = user.email;
                             passwordField.value = user.password;
                             console.log('Demo credentials filled:', user.email);
-
+                            
                             // Visual feedback
                             btn.style.backgroundColor = '#4CAF50';
                             btn.style.color = 'white';
@@ -231,7 +231,7 @@ class VZTApp {
             // Enter key handlers
             const loginEmail = document.getElementById('loginEmail');
             const loginPassword = document.getElementById('loginPassword');
-
+            
             if (loginEmail) {
                 loginEmail.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
@@ -240,7 +240,7 @@ class VZTApp {
                     }
                 });
             }
-
+            
             if (loginPassword) {
                 loginPassword.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
@@ -258,7 +258,7 @@ class VZTApp {
 
     setupMainAppEventListeners() {
         console.log('Setting up main app event listeners...');
-
+        
         try {
             // Navigation
             document.querySelectorAll('.nav-item').forEach(item => {
@@ -307,7 +307,7 @@ class VZTApp {
                 btn.addEventListener('click', (e) => {
                     document.querySelectorAll('.calc-tab-btn').forEach(b => b.classList.remove('active'));
                     document.querySelectorAll('.calculator-panel').forEach(p => p.classList.remove('active'));
-
+                    
                     e.target.classList.add('active');
                     const calc = e.target.dataset.calc;
                     const panel = document.getElementById(calc);
@@ -436,14 +436,14 @@ class VZTApp {
 
     login() {
         console.log('Login function called');
-
+        
         try {
             const emailField = document.getElementById('loginEmail');
             const passwordField = document.getElementById('loginPassword');
-
+            
             console.log('Email field found:', !!emailField);
             console.log('Password field found:', !!passwordField);
-
+            
             if (!emailField || !passwordField) {
                 console.error('Login fields not found');
                 alert('Chyba: Přihlašovací pole nebyla nalezena');
@@ -463,7 +463,7 @@ class VZTApp {
 
             const users = JSON.parse(localStorage.getItem('vzt_users') || '[]');
             console.log('Available users:', users.map(u => u.email));
-
+            
             const user = users.find(u => u.email === email && u.password === password);
 
             if (user) {
@@ -475,7 +475,7 @@ class VZTApp {
             } else {
                 console.log('Login failed - invalid credentials');
                 alert('Nesprávné přihlašovací údaje');
-
+                
                 // Show available credentials for debugging
                 console.log('Available credentials:');
                 users.forEach(u => {
@@ -490,7 +490,7 @@ class VZTApp {
 
     register() {
         console.log('Register function called');
-
+        
         try {
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
@@ -503,7 +503,7 @@ class VZTApp {
             }
 
             const users = JSON.parse(localStorage.getItem('vzt_users') || '[]');
-
+            
             if (users.find(u => u.email === email)) {
                 alert('Uživatel s tímto emailem již existuje');
                 return;
@@ -520,15 +520,15 @@ class VZTApp {
             users.push(newUser);
             localStorage.setItem('vzt_users', JSON.stringify(users));
             this.logAudit('Registrace uživatele', `Nový uživatel ${name} se zaregistroval`);
-
+            
             alert('Registrace úspěšná! Můžete se přihlásit.');
-
+            
             // Switch to login tab
             const loginTab = document.querySelector('.tab-btn[data-tab="login"]');
             if (loginTab) {
                 loginTab.click();
             }
-
+            
             // Clear form
             document.getElementById('regName').value = '';
             document.getElementById('regEmail').value = '';
@@ -559,14 +559,14 @@ class VZTApp {
         try {
             const loginScreen = document.getElementById('loginScreen');
             const mainApp = document.getElementById('mainApp');
-
+            
             if (loginScreen) {
                 loginScreen.classList.remove('hidden');
                 console.log('Login screen shown');
             } else {
                 console.error('Login screen not found');
             }
-
+            
             if (mainApp) {
                 mainApp.classList.add('hidden');
                 console.log('Main app hidden');
@@ -580,32 +580,32 @@ class VZTApp {
 
     showMainApp() {
         console.log('Showing main app for user:', this.currentUser.name);
-
+        
         try {
             const loginScreen = document.getElementById('loginScreen');
             const mainApp = document.getElementById('mainApp');
-
+            
             if (loginScreen) {
                 loginScreen.classList.add('hidden');
                 console.log('Login screen hidden');
             }
-
+            
             if (mainApp) {
                 mainApp.classList.remove('hidden');
                 console.log('Main app shown');
             }
-
+            
             // Update user info
             const currentUserEl = document.getElementById('currentUser');
             const currentRoleEl = document.getElementById('currentRole');
-
+            
             if (currentUserEl) {
                 currentUserEl.textContent = this.currentUser.name;
             }
             if (currentRoleEl) {
                 currentRoleEl.textContent = this.currentUser.role.toUpperCase();
             }
-
+            
             // Show/hide admin menu
             const adminItems = document.querySelectorAll('.admin-only');
             if (this.currentUser.role === 'admin') {
@@ -613,10 +613,10 @@ class VZTApp {
             } else {
                 adminItems.forEach(item => item.classList.add('hidden'));
             }
-
+            
             // Set up main app event listeners
             this.setupMainAppEventListeners();
-
+            
             // Load dashboard
             this.loadDashboard();
             this.showSection('dashboard');
@@ -627,7 +627,7 @@ class VZTApp {
 
     showSection(sectionName) {
         console.log('Showing section:', sectionName);
-
+        
         try {
             // Update navigation
             document.querySelectorAll('.nav-item').forEach(item => {
@@ -637,7 +637,7 @@ class VZTApp {
             if (activeNavItem) {
                 activeNavItem.classList.add('active');
             }
-
+            
             // Show section
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
@@ -646,7 +646,7 @@ class VZTApp {
             if (targetSection) {
                 targetSection.classList.add('active');
             }
-
+            
             // Load section-specific content
             switch (sectionName) {
                 case 'dashboard':
@@ -699,36 +699,36 @@ class VZTApp {
 
     loadDashboard() {
         console.log('Loading dashboard...');
-
+        
         try {
             const projects = JSON.parse(localStorage.getItem('vzt_projects') || '[]');
             const photos = JSON.parse(localStorage.getItem('vzt_photos') || '[]');
             const reports = JSON.parse(localStorage.getItem('vzt_reports') || '[]');
             const attendance = JSON.parse(localStorage.getItem('vzt_attendance') || '[]');
-
+            
             // Update stats
             const activeProjectsEl = document.getElementById('activeProjects');
             if (activeProjectsEl) {
                 activeProjectsEl.textContent = projects.length;
             }
-
+            
             const today = new Date().toDateString();
             const todayPhotos = photos.filter(p => new Date(p.date).toDateString() === today);
             const todayPhotosEl = document.getElementById('todayPhotos');
             if (todayPhotosEl) {
                 todayPhotosEl.textContent = todayPhotos.length;
             }
-
+            
             const thisWeek = this.getThisWeekStart();
             const weeklyReports = reports.filter(r => new Date(r.date) >= thisWeek);
             const weeklyReportsEl = document.getElementById('weeklyReports');
             if (weeklyReportsEl) {
                 weeklyReportsEl.textContent = weeklyReports.length;
             }
-
+            
             // Calculate work time
-            const todayAttendance = attendance.filter(a =>
-                a.userId === this.currentUser.id &&
+            const todayAttendance = attendance.filter(a => 
+                a.userId === this.currentUser.id && 
                 new Date(a.date).toDateString() === today
             );
             let workTime = 0;
@@ -741,10 +741,10 @@ class VZTApp {
             if (workTimeEl) {
                 workTimeEl.textContent = Math.round(workTime) + 'h';
             }
-
+            
             // Load projects grid
             this.loadProjectsGrid(projects);
-
+            
             console.log('Dashboard loaded successfully');
         } catch (error) {
             console.error('Error loading dashboard:', error);
@@ -754,9 +754,9 @@ class VZTApp {
     loadProjectsGrid(projects) {
         const grid = document.getElementById('projectsGrid');
         if (!grid) return;
-
+        
         grid.innerHTML = '';
-
+        
         projects.forEach(project => {
             const card = document.createElement('div');
             card.className = 'project-card';
@@ -778,27 +778,27 @@ class VZTApp {
 
     loadGPS() {
         console.log('Loading GPS section...');
-
+        
         // Initialize map if not already done
         if (!this.map) {
             setTimeout(() => {
                 try {
                     console.log('Initializing map...');
                     this.map = L.map('map').setView([50.0755, 14.4378], 13);
-
+                    
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         attribution: '© OpenStreetMap contributors'
                     }).addTo(this.map);
-
+                    
                     // Get current location
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(
                             (position) => {
                                 const lat = position.coords.latitude;
                                 const lng = position.coords.longitude;
-
+                                
                                 this.map.setView([lat, lng], 15);
-
+                                
                                 const marker = L.marker([lat, lng]).addTo(this.map);
                                 marker.bindPopup('Vaše aktuální pozice').openPopup();
                             },
@@ -813,7 +813,7 @@ class VZTApp {
                 }
             }, 100);
         }
-
+        
         // Load attendance
         this.loadAttendance();
         this.updateAttendanceStatus();
@@ -822,23 +822,23 @@ class VZTApp {
     loadAttendance() {
         const attendance = JSON.parse(localStorage.getItem('vzt_attendance') || '[]');
         const today = new Date().toDateString();
-        const todayAttendance = attendance.filter(a =>
-            a.userId === this.currentUser.id &&
+        const todayAttendance = attendance.filter(a => 
+            a.userId === this.currentUser.id && 
             new Date(a.date).toDateString() === today
         );
-
+        
         const list = document.getElementById('attendanceList');
         if (!list) return;
-
+        
         list.innerHTML = '';
-
+        
         todayAttendance.forEach(entry => {
             const div = document.createElement('div');
             div.className = 'attendance-entry';
             const time = new Date(entry.checkinTime).toLocaleTimeString('cs-CZ');
-            const checkoutTime = entry.checkoutTime ?
+            const checkoutTime = entry.checkoutTime ? 
                 new Date(entry.checkoutTime).toLocaleTimeString('cs-CZ') : 'Aktivní';
-
+            
             div.innerHTML = `
                 <span>${entry.type === 'checkin' ? 'Příchod' : 'Odchod'}: ${time}</span>
                 <span>${checkoutTime}</span>
@@ -850,14 +850,14 @@ class VZTApp {
     updateAttendanceStatus() {
         const attendance = JSON.parse(localStorage.getItem('vzt_attendance') || '[]');
         const today = new Date().toDateString();
-        const lastEntry = attendance.filter(a =>
-            a.userId === this.currentUser.id &&
+        const lastEntry = attendance.filter(a => 
+            a.userId === this.currentUser.id && 
             new Date(a.date).toDateString() === today
         ).sort((a, b) => new Date(b.checkinTime) - new Date(a.checkinTime))[0];
-
+        
         const checkInBtn = document.getElementById('checkInBtn');
         const checkOutBtn = document.getElementById('checkOutBtn');
-
+        
         if (lastEntry && !lastEntry.checkoutTime) {
             this.isCheckedIn = true;
             if (checkInBtn) checkInBtn.classList.add('hidden');
@@ -886,11 +886,11 @@ class VZTApp {
                             lng: position.coords.longitude
                         }
                     };
-
+                    
                     attendance.push(entry);
                     localStorage.setItem('vzt_attendance', JSON.stringify(attendance));
                     this.logAudit('Check In', `${this.currentUser.name} se přihlásil na pozici`);
-
+                    
                     this.loadAttendance();
                     this.updateAttendanceStatus();
                 },
@@ -907,17 +907,17 @@ class VZTApp {
         console.log('Check out requested');
         const attendance = JSON.parse(localStorage.getItem('vzt_attendance') || '[]');
         const today = new Date().toDateString();
-        const lastEntry = attendance.filter(a =>
-            a.userId === this.currentUser.id &&
-            new Date(a.date).toDateString() === today &&
+        const lastEntry = attendance.filter(a => 
+            a.userId === this.currentUser.id && 
+            new Date(a.date).toDateString() === today && 
             !a.checkoutTime
         ).sort((a, b) => new Date(b.checkinTime) - new Date(a.checkinTime))[0];
-
+        
         if (lastEntry) {
             lastEntry.checkoutTime = new Date().toISOString();
             localStorage.setItem('vzt_attendance', JSON.stringify(attendance));
             this.logAudit('Check Out', `${this.currentUser.name} se odhlásil z pozice`);
-
+            
             this.loadAttendance();
             this.updateAttendanceStatus();
         }
@@ -961,24 +961,24 @@ class VZTApp {
         try {
             const flow = parseFloat(document.getElementById('pipeFlow').value);
             const velocity = parseFloat(document.getElementById('pipeVelocity').value);
-
+            
             if (!flow || !velocity) {
                 alert('Prosím vyplňte všechna pole');
                 return;
             }
-
+            
             // Convert flow from m³/h to m³/s
             const flowMs = flow / 3600;
-
+            
             // Calculate area: A = Q / v
             const area = flowMs / velocity;
-
+            
             // Calculate diameter: D = sqrt(4*A/π)
             const diameter = Math.sqrt((4 * area) / Math.PI);
-
+            
             // Convert to mm
             const diameterMm = diameter * 1000;
-
+            
             const results = document.getElementById('pipeResults');
             if (results) {
                 results.innerHTML = `
@@ -1013,17 +1013,17 @@ class VZTApp {
             const straight = parseFloat(document.getElementById('ductStraight').value);
             const bends = parseInt(document.getElementById('ductBends').value) || 0;
             const branches = parseInt(document.getElementById('ductBranches').value) || 0;
-
+            
             if (!straight) {
                 alert('Prosím zadejte přímou délku');
                 return;
             }
-
+            
             // Calculate equivalent length
             const bendLength = bends * 1.5;
             const branchLength = branches * 2.0;
             const totalLength = straight + bendLength + branchLength;
-
+            
             const results = document.getElementById('ductResults');
             if (results) {
                 results.innerHTML = `
@@ -1057,16 +1057,16 @@ class VZTApp {
         try {
             const volume = parseFloat(document.getElementById('roomVolume').value);
             const airChanges = parseFloat(document.getElementById('airChanges').value);
-
+            
             if (!volume || !airChanges) {
                 alert('Prosím vyplňte všechna pole');
                 return;
             }
-
+            
             // Calculate airflow: Q = V × n
             const airflow = volume * airChanges;
             const airflowMs = airflow / 3600; // Convert to m³/s
-
+            
             const results = document.getElementById('airflowResults');
             if (results) {
                 results.innerHTML = `
@@ -1101,24 +1101,24 @@ class VZTApp {
             const length = parseFloat(document.getElementById('pipeLength').value);
             const diameter = parseFloat(document.getElementById('pipeDiameter').value);
             const velocity = parseFloat(document.getElementById('pressureVelocity').value);
-
+            
             if (!length || !diameter || !velocity) {
                 alert('Prosím vyplňte všechna pole');
                 return;
             }
-
+            
             // Convert diameter from mm to m
             const diameterM = diameter / 1000;
-
+            
             // Friction factor (approximation for smooth pipes)
             const f = 0.02;
-
+            
             // Air density (kg/m³)
             const density = 1.2;
-
+            
             // Calculate pressure loss: ΔP = f * (L/D) * (ρ*v²/2)
             const pressureLoss = f * (length / diameterM) * (density * velocity * velocity / 2);
-
+            
             const results = document.getElementById('pressureResults');
             if (results) {
                 results.innerHTML = `
@@ -1153,13 +1153,13 @@ class VZTApp {
             const messages = JSON.parse(localStorage.getItem('vzt_chat_messages') || '[]');
             const channelSelect = document.getElementById('chatChannel');
             const channel = channelSelect ? channelSelect.value : 'general';
-
+            
             const filteredMessages = messages.filter(m => m.channel === channel);
-
+            
             const container = document.getElementById('chatMessages');
             if (container) {
                 container.innerHTML = '';
-
+                
                 filteredMessages.forEach(message => {
                     const div = document.createElement('div');
                     div.className = message.user === this.currentUser.name ? 'message own' : 'message other';
@@ -1169,7 +1169,7 @@ class VZTApp {
                     `;
                     container.appendChild(div);
                 });
-
+                
                 // Scroll to bottom
                 container.scrollTop = container.scrollHeight;
                 console.log('Chat messages loaded successfully');
@@ -1184,16 +1184,16 @@ class VZTApp {
         try {
             const input = document.getElementById('messageInput');
             const channelSelect = document.getElementById('chatChannel');
-
+            
             if (!input) return;
-
+            
             const message = input.value.trim();
             const channel = channelSelect ? channelSelect.value : 'general';
-
+            
             if (!message) return;
-
+            
             const messages = JSON.parse(localStorage.getItem('vzt_chat_messages') || '[]');
-
+            
             const newMessage = {
                 id: Date.now(),
                 user: this.currentUser.name,
@@ -1201,10 +1201,10 @@ class VZTApp {
                 timestamp: new Date().toLocaleString('cs-CZ'),
                 channel
             };
-
+            
             messages.push(newMessage);
             localStorage.setItem('vzt_chat_messages', JSON.stringify(messages));
-
+            
             input.value = '';
             this.loadChatMessages();
             console.log('Message sent successfully');
@@ -1231,7 +1231,7 @@ class VZTApp {
     toggleTheme() {
         const currentTheme = localStorage.getItem('vzt_theme') || 'light';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
+        
         localStorage.setItem('vzt_theme', newTheme);
         this.applyTheme();
     }
@@ -1239,7 +1239,7 @@ class VZTApp {
     applyTheme() {
         const theme = localStorage.getItem('vzt_theme') || 'light';
         document.documentElement.setAttribute('data-color-scheme', theme);
-
+        
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) {
             themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
@@ -1249,7 +1249,7 @@ class VZTApp {
     logAudit(action, details) {
         try {
             const auditLog = JSON.parse(localStorage.getItem('vzt_audit_log') || '[]');
-
+            
             const entry = {
                 id: Date.now(),
                 action,
@@ -1257,14 +1257,14 @@ class VZTApp {
                 user: this.currentUser ? this.currentUser.name : 'System',
                 timestamp: new Date().toLocaleString('cs-CZ')
             };
-
+            
             auditLog.push(entry);
-
+            
             // Keep only last 100 entries
             if (auditLog.length > 100) {
                 auditLog.splice(0, auditLog.length - 100);
             }
-
+            
             localStorage.setItem('vzt_audit_log', JSON.stringify(auditLog));
         } catch (error) {
             console.error('Error logging audit:', error);
@@ -1282,7 +1282,7 @@ class VZTApp {
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing VZT app...');
-
+    
     // Wait a bit for all elements to be ready
     setTimeout(() => {
         try {
