@@ -1215,7 +1215,77 @@ class VZTApp {
 
     loadAdminPanel() {
         console.log('Loading admin panel...');
-        // Admin panel functionality would be implemented here
+        try {
+            const users = JSON.parse(localStorage.getItem('vzt_users') || '[]');
+            const tableContainer = document.getElementById('usersTable');
+
+            if (!tableContainer) return;
+
+            // Create table structure
+            tableContainer.innerHTML = `
+                <div class="table-header">
+                    <span>Jméno</span>
+                    <span>Email</span>
+                    <span>Role</span>
+                    <span>Akce</span>
+                </div>
+            `;
+
+            // Populate table rows
+            users.forEach(user => {
+                const row = document.createElement('div');
+                row.className = 'table-row';
+                row.innerHTML = `
+                    <span>${user.name}</span>
+                    <span>${user.email}</span>
+                    <span>${user.role}</span>
+                    <div class="actions">
+                        <button class="btn btn--outline btn--sm" onclick="app.deleteUser('${user.id}')">Smazat</button>
+                    </div>
+                `;
+                tableContainer.appendChild(row);
+            });
+
+            // Update system info stats
+            document.getElementById('totalUsers').textContent = users.length;
+            const projects = JSON.parse(localStorage.getItem('vzt_projects') || '[]').length;
+            document.getElementById('totalProjects').textContent = projects;
+            const photos = JSON.parse(localStorage.getItem('vzt_photos') || '[]').length;
+            document.getElementById('totalPhotos').textContent = photos;
+
+
+        } catch (error) {
+            console.error('Error loading admin panel:', error);
+        }
+    }
+
+    deleteUser(userId) {
+        console.log('Deleting user with ID:', userId);
+        try {
+            let users = JSON.parse(localStorage.getItem('vzt_users') || '[]');
+            const userToDelete = users.find(u => u.id === userId);
+
+            if (!userToDelete) {
+                alert('Uživatel nebyl nalezen.');
+                return;
+            }
+
+            if (userToDelete.id === this.currentUser.id) {
+                alert('Nemůžete smazat sami sebe.');
+                return;
+            }
+
+            if (confirm(`Opravdu chcete smazat uživatele ${userToDelete.name}?`)) {
+                users = users.filter(u => u.id !== userId);
+                localStorage.setItem('vzt_users', JSON.stringify(users));
+                this.logAudit('Smazání uživatele', `Uživatel ${userToDelete.name} byl smazán administrátorem ${this.currentUser.name}`);
+                alert('Uživatel byl úspěšně smazán.');
+                this.loadAdminPanel();
+            }
+        } catch (error) {
+            console.error('Chyba při mazání uživatele:', error);
+            alert('Nastala chyba při mazání uživatele.');
+        }
     }
 
     loadSettings() {
